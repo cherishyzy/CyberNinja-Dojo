@@ -148,7 +148,7 @@ make release-check
 
 Included tools:
 
-- `scripts/profile_wizard.py`: guided `profile.params.yaml` creation for first-time authors.
+- `scripts/profile_wizard.py`: interactive and non-interactive guided `profile.params.yaml` creation for first-time authors. Supports custom profiles as well as presets.
 - `scripts/profile_scorecard.py`: JSON, Markdown, and terminal quality scoring for profile repos.
 - `scripts/discovery_optimizer.py`: GitHub metadata and README discovery checks.
 - `scripts/render_catalog_entry.py`: catalog-ready Markdown, YAML, and PR-body snippets.
@@ -159,11 +159,44 @@ Included tools:
 
 ### Guided profile wizard
 
+The profile wizard helps first-time authors create a `profile.params.yaml` without
+editing YAML by hand. It supports both interactive and non-interactive modes.
+
+**Interactive mode** — run without flags for step-by-step prompts:
+
 ```bash
-python3 scripts/profile_wizard.py --class engineer --bundle open-source --output /tmp/profile.params.yaml --force
-python3 scripts/generate_profile.py --params /tmp/profile.params.yaml --output /tmp/engineering-reviewer
-python3 /tmp/engineering-reviewer/scripts/validate_profile.py /tmp/engineering-reviewer
+python3 scripts/profile_wizard.py
 ```
+
+You will be guided through:
+- Choosing a profile class preset (engineer, researcher, operator, general)
+- Customizing name, display name, description, author
+- Selecting optional capability bundles
+- Refining principles, scope, refusals, and output contract
+- Adding required environment variables
+- Setting the default model
+
+**Non-interactive mode** — pass `--name` and `--description` for CI / scripting:
+
+```bash
+python3 scripts/profile_wizard.py \
+  --class engineer \
+  --name db-reviewer \
+  --display-name "Database Migration Reviewer" \
+  --description "Reviews SQL migration diffs before deploy" \
+  --author "Your Name" \
+  --bundle database --bundle open-source \
+  --output /tmp/profile.params.yaml \
+  --force
+
+python3 scripts/generate_profile.py \
+  --params /tmp/profile.params.yaml \
+  --output /tmp/db-reviewer --force
+
+python3 /tmp/db-reviewer/scripts/validate_profile.py /tmp/db-reviewer
+```
+
+Run `python3 scripts/profile_wizard.py --help` for all available flags.
 
 ### Scorecard and discovery checks
 
